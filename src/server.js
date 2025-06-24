@@ -10,10 +10,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/api",router);
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res)=> {
   const IP_ISP = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  let data = {};
-   fetch("https://ipinfo.io/"+IP_ISP+"/json").then(response => { data = response.json(); });
+  let data = await fetch("https://ipinfo.io/"+IP_ISP+"/json");
   res.json({
     IP: req.ip.replace('::ffff:', ''),
     ISP: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
