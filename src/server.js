@@ -12,14 +12,28 @@ app.use("/api",router);
 
 app.get('/', async (req, res)=> {
   const IP_ISP = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  let data = await fetch("https://ipinfo.io/"+IP_ISP+"/json");
+  let data = await fetch("https://ipinfo.io/"+removeTexIP(IP_ISP)+"/json").then(response => {
+  return response.json(); 
+  }).then(data => {
+    return data;
+    
+  })
+
+
+  console.log(data);
+  
   res.json({
-    IP: req.ip.replace('::ffff:', ''),
-    ISP: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+    IP: removeTexIP(req.ip),
+    ISP: removeTexIP(IP_ISP),
     data
   });
 });
 
+
+const removeTexIP = (text)=>{
+   text.replace('::ffff:', '');
+   return text.replace('::1', "");
+}
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
